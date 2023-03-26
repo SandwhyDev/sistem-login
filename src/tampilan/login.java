@@ -6,8 +6,11 @@
 package tampilan;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import koneksi.koneksi;
 import libs.bycrpt;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,12 +22,38 @@ import org.mindrot.jbcrypt.BCrypt;
 public class login extends javax.swing.JFrame {
 
     private Connection conn = new koneksi().connect();
+        private DefaultTableModel tabmode;
+
+     protected void datatable() {
+        Object[] Baris = {"Id", "username", "password", "created", "updated"};
+        tabmode = new DefaultTableModel(null, Baris);
+        TableUser.setModel(tabmode);
+        String sql = "select * from user";
+
+        try {
+            java.sql.Statement stat = conn.createStatement();
+            ResultSet hasil = stat.executeQuery(sql);
+            while (hasil.next()) {
+                String a = hasil.getString("id");
+                String b = hasil.getString("username");
+                String c = hasil.getString("password");
+                String d = hasil.getString("createdAt");
+                String e = hasil.getString("updatedAt");
+
+                String[] data = {a, b, c, d, e};
+                tabmode.addRow(data);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     /**
      * Creates new form login
      */
     public login() {
         initComponents();
+        datatable();
     }
 
     /**
@@ -41,10 +70,20 @@ public class login extends javax.swing.JFrame {
         usernameField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         passwordField = new javax.swing.JPasswordField();
-        DaftarButton = new javax.swing.JButton();
+        DeleteButton = new javax.swing.JButton();
         LoginButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TableUser = new javax.swing.JTable();
+        DaftarButton1 = new javax.swing.JButton();
+        idField = new javax.swing.JTextField();
+        EditButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setText("Login");
@@ -67,10 +106,10 @@ public class login extends javax.swing.JFrame {
             }
         });
 
-        DaftarButton.setText("Daftar");
-        DaftarButton.addActionListener(new java.awt.event.ActionListener() {
+        DeleteButton.setText("Hapus");
+        DeleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DaftarButtonActionPerformed(evt);
+                DeleteButtonActionPerformed(evt);
             }
         });
 
@@ -81,6 +120,45 @@ public class login extends javax.swing.JFrame {
             }
         });
 
+        TableUser.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+            }
+        ));
+        TableUser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableUserMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(TableUser);
+
+        DaftarButton1.setText("Daftar");
+        DaftarButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DaftarButton1ActionPerformed(evt);
+            }
+        });
+
+        idField.setBackground(java.awt.SystemColor.activeCaptionBorder);
+        idField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                idFieldActionPerformed(evt);
+            }
+        });
+
+        EditButton1.setText("Edit");
+        EditButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EditButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -88,33 +166,55 @@ public class login extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(DaftarButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(passwordField)
                     .addComponent(jLabel3)
                     .addComponent(usernameField)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1)
-                    .addComponent(LoginButton, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))
-                .addContainerGap(205, Short.MAX_VALUE))
+                    .addComponent(LoginButton, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                    .addComponent(DaftarButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(idField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(EditButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                            .addComponent(DeleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(idField)
+                            .addComponent(usernameField, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LoginButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(EditButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LoginButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(DaftarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(DaftarButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DeleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
 
         pack();
@@ -128,13 +228,26 @@ public class login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_passwordFieldActionPerformed
 
-    private void DaftarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DaftarButtonActionPerformed
+    private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
+ // TODO add your handling code here:
+         int ok=JOptionPane.showConfirmDialog(null,"hapus username " + usernameField.getText(),"Konfirmasi Dialogg",JOptionPane.YES_NO_CANCEL_OPTION);
+        if(ok==0)
+        {
+        String sql="delete from user where id ='"+idField.getText()+"'";
+        try{
+        PreparedStatement stat=conn.prepareStatement(sql);
+        stat.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Data berhasil dihapus");
+//        kosong();
+        datatable();
+        
+        } catch(SQLException e){
+        JOptionPane.showMessageDialog(null,"Data gagal dihapus"+e);
+        }
+        }
 
-        this.dispose();
-        new Daftar().setVisible(true);
 
-
-    }//GEN-LAST:event_DaftarButtonActionPerformed
+    }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
         String username = usernameField.getText();
@@ -166,6 +279,51 @@ public class login extends javax.swing.JFrame {
             System.out.println("Terjadi kesalahan: " + e.getMessage());
         }
     }//GEN-LAST:event_LoginButtonActionPerformed
+
+    private void DaftarButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DaftarButton1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new Daftar().setVisible(true);
+    }//GEN-LAST:event_DaftarButton1ActionPerformed
+
+    private void TableUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableUserMouseClicked
+        // TODO add your handling code here:
+        int bar = TableUser.getSelectedRow();
+        String a = tabmode.getValueAt(bar, 1).toString();        
+        String b = tabmode.getValueAt(bar, 0).toString();
+
+        usernameField.setText(a);
+        idField.setText(b);
+
+        
+    }//GEN-LAST:event_TableUserMouseClicked
+
+    private void idFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_idFieldActionPerformed
+
+    private void EditButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButton1ActionPerformed
+        // TODO add your handling code here:
+         try{
+        String sql="update user set username=? where id =?";
+        PreparedStatement stat=conn.prepareStatement(sql);
+       
+        stat.setString(1,usernameField.getText());
+        stat.setString(2, idField.getText());
+        stat.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Data Berhasil Diubah");
+        usernameField.setText("");
+        datatable();
+        }
+         catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "Data Gagal Diubah" + e);
+             System.out.println(e);
+         }
+    }//GEN-LAST:event_EditButton1ActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -203,11 +361,16 @@ public class login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton DaftarButton;
+    private javax.swing.JButton DaftarButton1;
+    private javax.swing.JButton DeleteButton;
+    private javax.swing.JButton EditButton1;
     private javax.swing.JButton LoginButton;
+    private javax.swing.JTable TableUser;
+    private javax.swing.JTextField idField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPasswordField passwordField;
     private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
