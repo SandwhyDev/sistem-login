@@ -151,7 +151,7 @@ public class login extends javax.swing.JFrame {
                 if (isMatch) {
                     JOptionPane.showMessageDialog(null, "Login Berhasil");
                     this.dispose();
-                    new Home().setVisible(true);
+                    new USERDATA().setVisible(true);
 
                     //proses login berhasil, lakukan tindakan yang diinginkan
                 } else {
